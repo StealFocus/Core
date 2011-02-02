@@ -6,7 +6,7 @@
 //   Defines the AdapterTests type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006.Tests
+namespace StealFocus.Core.BizTalk2009.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

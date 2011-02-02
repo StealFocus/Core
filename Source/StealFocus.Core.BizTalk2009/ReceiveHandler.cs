@@ -6,7 +6,7 @@
 //   Defines the ReceiveHandler type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     using System.Management;
 
@@ -24,24 +24,26 @@ namespace StealFocus.Core.BizTalk2006
         {
             PutOptions options = new PutOptions();
             options.Type = PutType.CreateOnly;
-            ManagementClass handlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null);
-            foreach (ManagementObject handler in handlerManagementClass.GetInstances())
+            using (ManagementClass handlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null))
             {
-                if ((string)handler["AdapterName"] == adapterName && (string)handler["HostName"] == hostName)
+                foreach (ManagementObject handler in handlerManagementClass.GetInstances())
                 {
-                    handler.Delete();
+                    if ((string)handler["AdapterName"] == adapterName && (string)handler["HostName"] == hostName)
+                    {
+                        handler.Delete();
+                    }
                 }
-            }
 
-            ManagementObject recieveHandlerManager = handlerManagementClass.CreateInstance();
-            if (recieveHandlerManager == null)
-            {
-                throw new CoreException("Could not create Management Object.");
-            }
+                ManagementObject recieveHandlerManager = handlerManagementClass.CreateInstance();
+                if (recieveHandlerManager == null)
+                {
+                    throw new CoreException("Could not create Management Object.");
+                }
 
-            recieveHandlerManager["AdapterName"] = adapterName;
-            recieveHandlerManager["HostName"] = hostName;
-            recieveHandlerManager.Put(options);
+                recieveHandlerManager["AdapterName"] = adapterName;
+                recieveHandlerManager["HostName"] = hostName;
+                recieveHandlerManager.Put(options);
+            }
         }
 
         /// <summary>
@@ -53,13 +55,15 @@ namespace StealFocus.Core.BizTalk2006
         public static bool Exists(string adapterName, string hostName)
         {
             bool exists = false;
-            ManagementClass recieveHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null);
-            foreach (ManagementObject recieveHandler in recieveHandlerManagementClass.GetInstances())
+            using (ManagementClass recieveHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null))
             {
-                if ((string)recieveHandler["AdapterName"] == adapterName && (string)recieveHandler["HostName"] == hostName)
+                foreach (ManagementObject recieveHandler in recieveHandlerManagementClass.GetInstances())
                 {
-                    exists = true;
-                    break;
+                    if ((string)recieveHandler["AdapterName"] == adapterName && (string)recieveHandler["HostName"] == hostName)
+                    {
+                        exists = true;
+                        break;
+                    }
                 }
             }
 
@@ -73,13 +77,15 @@ namespace StealFocus.Core.BizTalk2006
         /// <param name="hostName">The Host name.</param>
         public static void Delete(string adapterName, string hostName)
         {
-            ManagementClass recieveHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null);
-            foreach (ManagementObject recieveHandler in recieveHandlerManagementClass.GetInstances())
+            using (ManagementClass recieveHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null))
             {
-                if ((string)recieveHandler["AdapterName"] == adapterName && (string)recieveHandler["HostName"] == hostName)
+                foreach (ManagementObject recieveHandler in recieveHandlerManagementClass.GetInstances())
                 {
-                    recieveHandler.Delete();
-                    break;
+                    if ((string)recieveHandler["AdapterName"] == adapterName && (string)recieveHandler["HostName"] == hostName)
+                    {
+                        recieveHandler.Delete();
+                        break;
+                    }
                 }
             }
         }
@@ -90,13 +96,15 @@ namespace StealFocus.Core.BizTalk2006
         /// <param name="adapterName">The Adapter name.</param>
         public static void DeleteAll(string adapterName)
         {
-            ManagementClass recieveHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null);
-            foreach (ManagementObject recieveHandler in recieveHandlerManagementClass.GetInstances())
+            using (ManagementClass recieveHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null))
             {
-                if ((string)recieveHandler["AdapterName"] == adapterName)
+                foreach (ManagementObject recieveHandler in recieveHandlerManagementClass.GetInstances())
                 {
-                    recieveHandler.Delete();
-                    break;
+                    if ((string)recieveHandler["AdapterName"] == adapterName)
+                    {
+                        recieveHandler.Delete();
+                        break;
+                    }
                 }
             }
         }

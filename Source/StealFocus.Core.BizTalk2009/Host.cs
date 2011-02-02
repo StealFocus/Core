@@ -6,7 +6,7 @@
 //   Defines the Host type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -60,31 +60,39 @@ namespace StealFocus.Core.BizTalk2006
             PutOptions options = new PutOptions();
             options.Type = PutType.CreateOnly;
             ObjectGetOptions bts_objOptions = new ObjectGetOptions();
-            ManagementClass bts_AdminObjClassServerHost = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_ServerHost", bts_objOptions);
-            ManagementObject bts_AdminObjectServerHost = bts_AdminObjClassServerHost.CreateInstance();
-            if (bts_AdminObjectServerHost == null)
+            using (ManagementClass bts_AdminObjClassServerHost = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_ServerHost", bts_objOptions))
             {
-                throw new CoreException("Could not create Management Object.");
-            }
+                using (ManagementObject bts_AdminObjectServerHost = bts_AdminObjClassServerHost.CreateInstance())
+                {
+                    if (bts_AdminObjectServerHost == null)
+                    {
+                        throw new CoreException("Could not create Management Object.");
+                    }
 
-            bts_AdminObjectServerHost["ServerName"] = serverName;
-            bts_AdminObjectServerHost["HostName"] = hostName;
-            bts_AdminObjectServerHost.InvokeMethod("Map", null);
-            ManagementClass bts_AdminObjClassHostInstance = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_HostInstance", bts_objOptions);
-            ManagementObject bts_AdminObjectHostInstance = bts_AdminObjClassHostInstance.CreateInstance();
-            if (bts_AdminObjectHostInstance == null)
-            {
-                throw new CoreException("Could not create Management Object.");
+                    bts_AdminObjectServerHost["ServerName"] = serverName;
+                    bts_AdminObjectServerHost["HostName"] = hostName;
+                    bts_AdminObjectServerHost.InvokeMethod("Map", null);
+                    using (ManagementClass bts_AdminObjClassHostInstance = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_HostInstance", bts_objOptions))
+                    {
+                        using (ManagementObject bts_AdminObjectHostInstance = bts_AdminObjClassHostInstance.CreateInstance())
+                        {
+                            if (bts_AdminObjectHostInstance == null)
+                            {
+                                throw new CoreException("Could not create Management Object.");
+                            }
+
+                            bts_AdminObjectHostInstance["Name"] = string.Format(CultureInfo.CurrentCulture, "Microsoft BizTalk Server {0} {1}", hostName, serverName);
+                            string user = userName;
+                            string pwd = password;
+                            object[] objparams = new object[3];
+                            objparams[0] = user;
+                            objparams[1] = pwd;
+                            objparams[2] = true;
+                            bts_AdminObjectHostInstance.InvokeMethod("Install", objparams);
+                        }
+                    }
+                }
             }
-            
-            bts_AdminObjectHostInstance["Name"] = string.Format(CultureInfo.CurrentCulture, "Microsoft BizTalk Server {0} {1}", hostName, serverName);
-            string user = userName;
-            string pwd = password;
-            object[] objparams = new object[3];
-            objparams[0] = user;
-            objparams[1] = pwd;
-            objparams[2] = true;
-            bts_AdminObjectHostInstance.InvokeMethod("Install", objparams);
         }
 
         /// <summary>
@@ -170,12 +178,14 @@ namespace StealFocus.Core.BizTalk2006
         public static string[] GetSendHandlers(string hostName)
         {
             ArrayList handlerList = new ArrayList();
-            ManagementClass handlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null);
-            foreach (ManagementObject handler in handlerManagementClass.GetInstances())
+            using (ManagementClass handlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null))
             {
-                if ((string)handler["HostName"] == hostName)
+                foreach (ManagementObject handler in handlerManagementClass.GetInstances())
                 {
-                    handlerList.Add(handler["AdapterName"]);
+                    if ((string)handler["HostName"] == hostName)
+                    {
+                        handlerList.Add(handler["AdapterName"]);
+                    }
                 }
             }
 
@@ -190,12 +200,14 @@ namespace StealFocus.Core.BizTalk2006
         public static string[] GetReceiveHandlers(string hostName)
         {
             ArrayList handlerList = new ArrayList();
-            ManagementClass handlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null);
-            foreach (ManagementObject handler in handlerManagementClass.GetInstances())
+            using (ManagementClass handlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_ReceiveHandler", null))
             {
-                if ((string)handler["HostName"] == hostName)
+                foreach (ManagementObject handler in handlerManagementClass.GetInstances())
                 {
-                    handlerList.Add(handler["AdapterName"]);
+                    if ((string)handler["HostName"] == hostName)
+                    {
+                        handlerList.Add(handler["AdapterName"]);
+                    }
                 }
             }
 
@@ -276,13 +288,15 @@ namespace StealFocus.Core.BizTalk2006
         {
             int count = 0;
             string query = string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_MessageInstance");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null);
-            foreach (ManagementObject messageInstanceManager in searcher.Get())
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null))
             {
-                string host = messageInstanceManager["HostName"].ToString();
-                if (host == hostName)
+                foreach (ManagementObject messageInstanceManager in searcher.Get())
                 {
-                    count++;
+                    string host = messageInstanceManager["HostName"].ToString();
+                    if (host == hostName)
+                    {
+                        count++;
+                    }
                 }
             }
 
@@ -296,19 +310,23 @@ namespace StealFocus.Core.BizTalk2006
         private static void TerminateMessageInstances(string hostName)
         {
             string query = string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_MessageInstance");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null);
-            foreach (ManagementObject messageInstanceManager in searcher.Get())
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null))
             {
-                string host = messageInstanceManager["HostName"].ToString();
-                string status = messageInstanceManager["ServiceInstanceStatus"].ToString();
-                if (host == hostName)
+                foreach (ManagementObject messageInstanceManager in searcher.Get())
                 {
-                    if (CanTerminate(status))
+                    string host = messageInstanceManager["HostName"].ToString();
+                    string status = messageInstanceManager["ServiceInstanceStatus"].ToString();
+                    if (host == hostName)
                     {
-                        string serviceInstanceId = messageInstanceManager["ServiceInstanceID"].ToString();
-                        string serviceTypeId = messageInstanceManager["ServiceTypeId"].ToString();
-                        string serviceClassId = messageInstanceManager["ServiceTypeId"].ToString(); // For some reason the service class id always seems to return nullref exception and  and the service type seems to work if used instead, dont know why?
-                        TerminateServiceInstancesByID(hostName, serviceInstanceId, serviceClassId, serviceTypeId);
+                        if (CanTerminate(status))
+                        {
+                            // For some reason the service class id always seems to return nullref exception 
+                            // and the service type seems to work if used instead.
+                            string serviceInstanceId = messageInstanceManager["ServiceInstanceID"].ToString();
+                            string serviceTypeId = messageInstanceManager["ServiceTypeId"].ToString();
+                            string serviceClassId = messageInstanceManager["ServiceTypeId"].ToString();
+                            TerminateServiceInstancesByID(hostName, serviceInstanceId, serviceClassId, serviceTypeId);
+                        }
                     }
                 }
             }
@@ -321,19 +339,23 @@ namespace StealFocus.Core.BizTalk2006
         private static void SuspendMessageInstances(string hostName)
         {
             string query = string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_MessageInstance");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null);
-            foreach (ManagementObject messageInstanceManager in searcher.Get())
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null))
             {
-                string host = messageInstanceManager["HostName"].ToString();
-                string status = messageInstanceManager["ServiceInstanceStatus"].ToString();
-                if (host == hostName)
+                foreach (ManagementObject messageInstanceManager in searcher.Get())
                 {
-                    if (CanSuspend(status))
+                    string host = messageInstanceManager["HostName"].ToString();
+                    string status = messageInstanceManager["ServiceInstanceStatus"].ToString();
+                    if (host == hostName)
                     {
-                        string serviceInstanceId = messageInstanceManager["ServiceInstanceID"].ToString();
-                        string serviceTypeId = messageInstanceManager["ServiceTypeId"].ToString();
-                        string serviceClassId = messageInstanceManager["ServiceTypeId"].ToString(); // For some reason the service class id always seems to return nullref exception and      and the service type seems to work if used instead, dont know why?             
-                        SuspendServiceInstancesByID(hostName, serviceInstanceId, serviceClassId, serviceTypeId);
+                        if (CanSuspend(status))
+                        {
+                            // For some reason the service class id always seems to return nullref exception 
+                            // and the service type seems to work if used instead.
+                            string serviceInstanceId = messageInstanceManager["ServiceInstanceID"].ToString();
+                            string serviceTypeId = messageInstanceManager["ServiceTypeId"].ToString();
+                            string serviceClassId = messageInstanceManager["ServiceTypeId"].ToString();
+                            SuspendServiceInstancesByID(hostName, serviceInstanceId, serviceClassId, serviceTypeId);
+                        }
                     }
                 }
             }
@@ -348,13 +370,15 @@ namespace StealFocus.Core.BizTalk2006
         {
             int count = 0;
             string query = string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_ServiceInstance");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null);
-            foreach (ManagementObject serviceInstanceManager in searcher.Get())
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null))
             {
-                string host = serviceInstanceManager["HostName"].ToString();
-                if (host == hostName)
+                foreach (ManagementObject serviceInstanceManager in searcher.Get())
                 {
-                    count++;
+                    string host = serviceInstanceManager["HostName"].ToString();
+                    if (host == hostName)
+                    {
+                        count++;
+                    }
                 }
             }
 
@@ -368,19 +392,23 @@ namespace StealFocus.Core.BizTalk2006
         private static void SuspendServiceInstances(string hostName)
         {
             string query = string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_ServiceInstance");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null);
-            foreach (ManagementObject serviceInstanceManager in searcher.Get())
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null))
             {
-                string host = serviceInstanceManager["HostName"].ToString();
-                string status = serviceInstanceManager["ServiceStatus"].ToString();
-                if (host == hostName)
+                foreach (ManagementObject serviceInstanceManager in searcher.Get())
                 {
-                    if (CanSuspend(status))
+                    string host = serviceInstanceManager["HostName"].ToString();
+                    string status = serviceInstanceManager["ServiceStatus"].ToString();
+                    if (host == hostName)
                     {
-                        string serviceInstanceId = serviceInstanceManager["InstanceID"].ToString();
-                        string serviceTypeId = serviceInstanceManager["ServiceTypeId"].ToString();
-                        string serviceClassId = serviceInstanceManager["ServiceTypeId"].ToString(); // For some reason the service class id always seems to return nullref exception and  and the service type seems to work if used instead, dont know why?
-                        SuspendServiceInstancesByID(hostName, serviceInstanceId, serviceClassId, serviceTypeId);
+                        if (CanSuspend(status))
+                        {
+                            // For some reason the service class id always seems to return nullref exception 
+                            // and the service type seems to work if used instead.
+                            string serviceInstanceId = serviceInstanceManager["InstanceID"].ToString();
+                            string serviceTypeId = serviceInstanceManager["ServiceTypeId"].ToString();
+                            string serviceClassId = serviceInstanceManager["ServiceTypeId"].ToString();
+                            SuspendServiceInstancesByID(hostName, serviceInstanceId, serviceClassId, serviceTypeId);
+                        }
                     }
                 }
             }
@@ -393,19 +421,23 @@ namespace StealFocus.Core.BizTalk2006
         private static void TerminateServiceInstances(string hostName)
         {
             string query = string.Format(CultureInfo.CurrentCulture, "SELECT * FROM MSBTS_ServiceInstance");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null);
-            foreach (ManagementObject serviceInstanceManager in searcher.Get())
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(new ManagementScope(@"root\MicrosoftBizTalkServer"), new WqlObjectQuery(query), null))
             {
-                string host = serviceInstanceManager["HostName"].ToString();
-                string status = serviceInstanceManager["ServiceStatus"].ToString();
-                if (host == hostName)
+                foreach (ManagementObject serviceInstanceManager in searcher.Get())
                 {
-                    if (CanTerminate(status))
+                    string host = serviceInstanceManager["HostName"].ToString();
+                    string status = serviceInstanceManager["ServiceStatus"].ToString();
+                    if (host == hostName)
                     {
-                        string serviceInstanceId = serviceInstanceManager["InstanceID"].ToString();
-                        string serviceTypeId = serviceInstanceManager["ServiceTypeId"].ToString();
-                        string serviceClassId = serviceInstanceManager["ServiceTypeId"].ToString(); // For some reason the service class id always seems to return nullref exception and the service type seems to work if used instead, dont know why?
-                        TerminateServiceInstancesByID(hostName, serviceInstanceId, serviceClassId, serviceTypeId);
+                        if (CanTerminate(status))
+                        {
+                            // For some reason the service class id always seems to return nullref exception 
+                            // and the service type seems to work if used instead.
+                            string serviceInstanceId = serviceInstanceManager["InstanceID"].ToString();
+                            string serviceTypeId = serviceInstanceManager["ServiceTypeId"].ToString();
+                            string serviceClassId = serviceInstanceManager["ServiceTypeId"].ToString();
+                            TerminateServiceInstancesByID(hostName, serviceInstanceId, serviceClassId, serviceTypeId);
+                        }
                     }
                 }
             }
@@ -427,8 +459,10 @@ namespace StealFocus.Core.BizTalk2006
             serviceClassIdList.Add(serviceClassId);
             serviceTypeIdList.Add(serviceTypeId);
             string managementObjectPath = string.Format(CultureInfo.CurrentCulture, "root\\MicrosoftBizTalkServer:MSBTS_HostQueue.HostName=\"{0}\"", hostName);
-            ManagementObject managementObject = new ManagementObject(managementObjectPath);
-            managementObject.InvokeMethod("SuspendServiceInstancesByID", new object[] { serviceClassIdList.ToArray(), serviceTypeIdList.ToArray(), serviceInstanceIdList.ToArray() });
+            using (ManagementObject managementObject = new ManagementObject(managementObjectPath))
+            {
+                managementObject.InvokeMethod("SuspendServiceInstancesByID", new object[] { serviceClassIdList.ToArray(), serviceTypeIdList.ToArray(), serviceInstanceIdList.ToArray() });
+            }
         }
 
         /// <summary>
@@ -447,8 +481,10 @@ namespace StealFocus.Core.BizTalk2006
             serviceClassIdList.Add(serviceClassId);
             serviceTypeIdList.Add(serviceTypeId);
             string managementObjectPath = string.Format(CultureInfo.CurrentCulture, "root\\MicrosoftBizTalkServer:MSBTS_HostQueue.HostName=\"{0}\"", hostName);
-            ManagementObject managementObject = new ManagementObject(managementObjectPath);
-            managementObject.InvokeMethod("TerminateServiceInstancesByID", new object[] { serviceClassIdList.ToArray(), serviceTypeIdList.ToArray(), serviceInstanceIdList.ToArray() });
+            using (ManagementObject managementObject = new ManagementObject(managementObjectPath))
+            {
+                managementObject.InvokeMethod("TerminateServiceInstancesByID", new object[] { serviceClassIdList.ToArray(), serviceTypeIdList.ToArray(), serviceInstanceIdList.ToArray() });
+            }
         }
 
         #endregion // Methods

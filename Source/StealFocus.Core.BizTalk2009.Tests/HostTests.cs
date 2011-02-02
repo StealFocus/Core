@@ -6,7 +6,7 @@
 //   Defines the HostTests type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006.Tests
+namespace StealFocus.Core.BizTalk2009.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,7 +22,7 @@ namespace StealFocus.Core.BizTalk2006.Tests
         [TestMethod]
         public void IntegrationTestCreateAndDelete()
         {
-            const string HostName = "BTS_FoundationTestHost1";
+            const string HostName = "BTS_CoreTestHost1";
             try
             {
                 // Make sure the Host does not exist
@@ -44,7 +44,7 @@ namespace StealFocus.Core.BizTalk2006.Tests
         [TestMethod]
         public void IntegrationTestManipulation()
         {
-            const string HostName = "BTS_FoundationTestHost2";
+            const string HostName = "BTS_CoreTestHost2";
 
             // Make sure the Handlers do not exist
             ReceiveHandler.Delete("FILE", HostName);

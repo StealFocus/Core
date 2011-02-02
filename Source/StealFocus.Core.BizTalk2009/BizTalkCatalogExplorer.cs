@@ -6,7 +6,7 @@
 //   Defines the BizTalkCatalogExplorer type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     using System;
     using System.Collections;

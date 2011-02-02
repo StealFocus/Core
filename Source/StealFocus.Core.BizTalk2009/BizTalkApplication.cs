@@ -6,7 +6,7 @@
 //   Defines the BizTalkApplication type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     using System;
     using System.Collections;
@@ -274,6 +274,11 @@ namespace StealFocus.Core.BizTalk2006
         /// <param name="orchestrationNames">The Orchestration names.</param>
         public void StartOrchestrations(string[] orchestrationNames)
         {
+            if (orchestrationNames == null)
+            {
+                throw new ArgumentNullException("orchestrationNames");
+            }
+
             foreach (string orchestrationName in orchestrationNames)
             {
                 foreach (BtsOrchestration orchestration in this.bizTalkApplication.Orchestrations)

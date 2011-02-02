@@ -6,7 +6,7 @@
 //   Defines the HostManagement type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     using System.Globalization;
     using System.Management;
@@ -27,12 +27,15 @@ namespace StealFocus.Core.BizTalk2006
         {
             ManagementScope scope = GetManagementScope();
             ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.InvariantCulture, "select * from {0} where name = '{1}'", new object[] { "MSBTS_Host", hostName }));
-            ManagementObjectCollection objects = new ManagementObjectSearcher(scope, query, null).Get();
-            using (ManagementObjectCollection.ManagementObjectEnumerator enumerator = objects.GetEnumerator())
+            using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher(scope, query, null))
             {
-                while (enumerator.MoveNext())
+                ManagementObjectCollection objects = managementObjectSearcher.Get();
+                using (ManagementObjectCollection.ManagementObjectEnumerator enumerator = objects.GetEnumerator())
                 {
-                    return (ManagementObject)enumerator.Current;
+                    while (enumerator.MoveNext())
+                    {
+                        return (ManagementObject)enumerator.Current;
+                    }
                 }
             }
 
@@ -48,12 +51,15 @@ namespace StealFocus.Core.BizTalk2006
         {
             ManagementScope scope = GetManagementScope();
             ObjectQuery query = new ObjectQuery(string.Format(CultureInfo.InvariantCulture, "select * from {0} where name = '{1}'", new object[] { "MSBTS_HostSetting", hostSettingName }));
-            ManagementObjectCollection objects = new ManagementObjectSearcher(scope, query, null).Get();
-            using (ManagementObjectCollection.ManagementObjectEnumerator enumerator = objects.GetEnumerator())
+            using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher(scope, query, null))
             {
-                while (enumerator.MoveNext())
+                ManagementObjectCollection objects = managementObjectSearcher.Get();
+                using (ManagementObjectCollection.ManagementObjectEnumerator enumerator = objects.GetEnumerator())
                 {
-                    return (ManagementObject)enumerator.Current;
+                    while (enumerator.MoveNext())
+                    {
+                        return (ManagementObject)enumerator.Current;
+                    }
                 }
             }
 
@@ -93,9 +99,11 @@ namespace StealFocus.Core.BizTalk2006
         {
             ManagementScope managementScope = GetManagementScope();
             ManagementPath managementPath = new ManagementPath(path);
-            ManagementClass managementClass = new ManagementClass(managementScope, managementPath, null);
-            managementClass.Get();
-            return managementClass;
+            using (ManagementClass managementClass = new ManagementClass(managementScope, managementPath, null))
+            {
+                managementClass.Get();
+                return managementClass;
+            }
         }
 
         // /// <remarks />

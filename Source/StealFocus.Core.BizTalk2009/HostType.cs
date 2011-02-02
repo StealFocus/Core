@@ -6,7 +6,7 @@
 //   Defines the HostType type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     /// <summary>
     /// Host types.

@@ -6,7 +6,7 @@
 //   Defines the Adapter type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     using System;
     using System.Collections;
@@ -38,21 +38,25 @@ namespace StealFocus.Core.BizTalk2006
         /// <param name="comment">The comment.</param>
         public static void Add(string name, Guid managementClassId, string comment)
         {
-            ManagementClass addAdapter_objClass = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_AdapterSetting", new ObjectGetOptions());
-            ManagementObject addAdapter_objInstance = addAdapter_objClass.CreateInstance();
-            if (addAdapter_objInstance == null)
+            using (ManagementClass addAdapter_objClass = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_AdapterSetting", new ObjectGetOptions()))
             {
-                throw new CoreException("Could not create Management Object.");
-            }
+                ManagementObject addAdapter_objInstance = addAdapter_objClass.CreateInstance();
+                if (addAdapter_objInstance == null)
+                {
+                    throw new CoreException("Could not create Management Object.");
+                }
 
-            addAdapter_objInstance.SetPropertyValue("Name", name);
-            addAdapter_objInstance.SetPropertyValue("MgmtCLSID", managementClassId.ToString("B")); // e.g. "{9A7B0162-2CD5-4F61-B7EB-C40A3442A5F8}"
-            if (!string.IsNullOrEmpty(comment))
-            {
-                addAdapter_objInstance.SetPropertyValue("Comment", comment);
-            }
+                addAdapter_objInstance.SetPropertyValue("Name", name);
 
-            addAdapter_objInstance.Put();
+                // "B" GUID format example - "{9A7B0162-2CD5-4F61-B7EB-C40A3442A5F8}"
+                addAdapter_objInstance.SetPropertyValue("MgmtCLSID", managementClassId.ToString("B"));
+                if (!string.IsNullOrEmpty(comment))
+                {
+                    addAdapter_objInstance.SetPropertyValue("Comment", comment);
+                }
+
+                addAdapter_objInstance.Put();
+            }
         }
 
         /// <summary>
@@ -63,13 +67,15 @@ namespace StealFocus.Core.BizTalk2006
         {
             SendHandler.DeleteAll(adapterName);
             ReceiveHandler.DeleteAll(adapterName);
-            ManagementClass managementClass = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_AdapterSetting", new ObjectGetOptions());
-            foreach (ManagementObject adapter in managementClass.GetInstances())
+            using (ManagementClass managementClass = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_AdapterSetting", new ObjectGetOptions()))
             {
-                if ((string)adapter["Name"] == adapterName)
+                foreach (ManagementObject adapter in managementClass.GetInstances())
                 {
-                    adapter.Delete();
-                    break;
+                    if ((string)adapter["Name"] == adapterName)
+                    {
+                        adapter.Delete();
+                        break;
+                    }
                 }
             }
         }
@@ -81,10 +87,12 @@ namespace StealFocus.Core.BizTalk2006
         public static string[] GetAdapters()
         {
             ArrayList adapterList = new ArrayList();
-            ManagementClass managementClass = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_AdapterSetting", new ObjectGetOptions());
-            foreach (ManagementObject adapter in managementClass.GetInstances())
+            using (ManagementClass managementClass = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_AdapterSetting", new ObjectGetOptions()))
             {
-                adapterList.Add(adapter["Name"]);
+                foreach (ManagementObject adapter in managementClass.GetInstances())
+                {
+                    adapterList.Add(adapter["Name"]);
+                }
             }
 
             return (string[])adapterList.ToArray(typeof(string));
@@ -97,13 +105,15 @@ namespace StealFocus.Core.BizTalk2006
         /// <returns>The management class ID.</returns>
         public static Guid GetManagementClassId(string adapterName)
         {
-            ManagementClass managementClass = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_AdapterSetting", new ObjectGetOptions());
-            foreach (ManagementObject adapter in managementClass.GetInstances())
+            using (ManagementClass managementClass = new ManagementClass(@"root\MicrosoftBizTalkServer", "MSBTS_AdapterSetting", new ObjectGetOptions()))
             {
-                if ((string)adapter["Name"] == adapterName)
+                foreach (ManagementObject adapter in managementClass.GetInstances())
                 {
-                    string managementClassId = (string)adapter["MgmtCLSID"];
-                    return new Guid(managementClassId);
+                    if ((string)adapter["Name"] == adapterName)
+                    {
+                        string managementClassId = (string)adapter["MgmtCLSID"];
+                        return new Guid(managementClassId);
+                    }
                 }
             }
 

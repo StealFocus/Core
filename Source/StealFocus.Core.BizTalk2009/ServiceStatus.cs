@@ -6,7 +6,7 @@
 //   Defines the ServiceStatus type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     /// <summary>
     /// ServiceStatus Class.

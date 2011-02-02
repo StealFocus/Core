@@ -6,7 +6,7 @@
 //   Defines the BizTalkCatalogExplorerTests type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006.Tests
+namespace StealFocus.Core.BizTalk2009.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,8 +22,8 @@ namespace StealFocus.Core.BizTalk2006.Tests
         [TestMethod]
         public void IntegrationTestCreateAndRemove()
         {
-            const string AppName = "MyFoundationTestApplication";
-            BizTalkCatalogExplorer bizTalkCatalogExplorer = new BizTalkCatalogExplorer("server=.;database=BizTalkMgmtDb;integrated security=sspi;");
+            const string AppName = "MyCoreTestApplication";
+            BizTalkCatalogExplorer bizTalkCatalogExplorer = new BizTalkCatalogExplorer("server=.\\MSSqlSvr2008;database=BizTalkMgmtDb;integrated security=sspi;");
             bizTalkCatalogExplorer.CreateApplication(AppName);
             bizTalkCatalogExplorer.RemoveApplication(AppName);
         }

@@ -6,7 +6,7 @@
 //   Defines the SendHandler type.
 // </summary>
 // ---------------------------------------------------------------------------------------------------------------------
-namespace StealFocus.Core.BizTalk2006
+namespace StealFocus.Core.BizTalk2009
 {
     using System.Management;
 
@@ -35,25 +35,27 @@ namespace StealFocus.Core.BizTalk2006
         {
             PutOptions options = new PutOptions();
             options.Type = PutType.CreateOnly;
-            ManagementClass handlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null);
-            foreach (ManagementObject handler in handlerManagementClass.GetInstances())
+            using (ManagementClass handlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null))
             {
-                if ((string)handler["AdapterName"] == adapterName && (string)handler["HostName"] == hostName)
+                foreach (ManagementObject handler in handlerManagementClass.GetInstances())
                 {
-                    handler.Delete();
+                    if ((string)handler["AdapterName"] == adapterName && (string)handler["HostName"] == hostName)
+                    {
+                        handler.Delete();
+                    }
                 }
-            }
 
-            ManagementObject handlerInstance = handlerManagementClass.CreateInstance();
-            if (handlerInstance == null)
-            {
-                throw new CoreException("Could not create Management Object.");
-            }
+                ManagementObject handlerInstance = handlerManagementClass.CreateInstance();
+                if (handlerInstance == null)
+                {
+                    throw new CoreException("Could not create Management Object.");
+                }
 
-            handlerInstance["AdapterName"] = adapterName;
-            handlerInstance["HostName"] = hostName;
-            handlerInstance["IsDefault"] = isDefault;
-            handlerInstance.Put(options);
+                handlerInstance["AdapterName"] = adapterName;
+                handlerInstance["HostName"] = hostName;
+                handlerInstance["IsDefault"] = isDefault;
+                handlerInstance.Put(options);
+            }
         }
 
         /// <summary>
@@ -65,13 +67,15 @@ namespace StealFocus.Core.BizTalk2006
         public static bool Exists(string adapterName, string hostName)
         {
             bool exists = false;
-            ManagementClass sendHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null);
-            foreach (ManagementObject sendHandler in sendHandlerManagementClass.GetInstances())
+            using (ManagementClass sendHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null))
             {
-                if ((string)sendHandler["AdapterName"] == adapterName && (string)sendHandler["HostName"] == hostName)
+                foreach (ManagementObject sendHandler in sendHandlerManagementClass.GetInstances())
                 {
-                    exists = true;
-                    break;
+                    if ((string)sendHandler["AdapterName"] == adapterName && (string)sendHandler["HostName"] == hostName)
+                    {
+                        exists = true;
+                        break;
+                    }
                 }
             }
 
@@ -85,13 +89,15 @@ namespace StealFocus.Core.BizTalk2006
         /// <param name="hostName">The Host name.</param>
         public static void Delete(string adapterName, string hostName)
         {
-            ManagementClass sendHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null);
-            foreach (ManagementObject sendHandler in sendHandlerManagementClass.GetInstances())
+            using (ManagementClass sendHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null))
             {
-                if ((string)sendHandler["AdapterName"] == adapterName && (string)sendHandler["HostName"] == hostName)
+                foreach (ManagementObject sendHandler in sendHandlerManagementClass.GetInstances())
                 {
-                    sendHandler.Delete();
-                    break;
+                    if ((string)sendHandler["AdapterName"] == adapterName && (string)sendHandler["HostName"] == hostName)
+                    {
+                        sendHandler.Delete();
+                        break;
+                    }
                 }
             }
         }
@@ -102,13 +108,15 @@ namespace StealFocus.Core.BizTalk2006
         /// <param name="adapterName">The Adapter name.</param>
         public static void DeleteAll(string adapterName)
         {
-            ManagementClass sendHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null);
-            foreach (ManagementObject sendHandler in sendHandlerManagementClass.GetInstances())
+            using (ManagementClass sendHandlerManagementClass = new ManagementClass("root\\MicrosoftBizTalkServer", "MSBTS_SendHandler2", null))
             {
-                if ((string)sendHandler["AdapterName"] == adapterName)
+                foreach (ManagementObject sendHandler in sendHandlerManagementClass.GetInstances())
                 {
-                    sendHandler.Delete();
-                    break;
+                    if ((string)sendHandler["AdapterName"] == adapterName)
+                    {
+                        sendHandler.Delete();
+                        break;
+                    }
                 }
             }
         }
