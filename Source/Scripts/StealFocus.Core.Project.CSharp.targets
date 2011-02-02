@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+ 
+
+  <!-- 
+    IMPORTANT - you must import these targets for the build scripts to function.
+  -->
+  <Import Project="$(MSBuildExtensionsPath)\StealFocus\Kata\v1.2\StealFocus.Kata.Project.CSharp.targets" />
+  <Import Project="StealFocus.Core.Project.Assembly.targets" />
+
+  
+  <Target Name="CodeGeneration">
+    <!-- 
+      Peform any code generation steps here. This will be called when the "Rebuild" target is called. This will occur 
+      from building the Solution/Project at the command line with MSBuild specifying the "Rebuild" target or by 
+      choosing "Rebuild Solution" or "Rebuild" in Visual Studio.
+    -->
+    <!--
+    <Exec
+      Condition=" '$(ProjectName)'=='StealFocus.Core.ServiceAgents' "
+      Command='"$(SYSTEMDRIVE)\Program Files\Microsoft SDKs\Windows\v6.0A\Bin\svcutil.exe" .\ThirdPartyService\ThirdPartyService.wsdl /namespace:*,StealFocus.Core.ServiceAgents.ThirdPartyService /out:.\ThirdPartyService\ThirdPartyService.g.cs' />
+    -->
+  </Target>
+
+</Project>

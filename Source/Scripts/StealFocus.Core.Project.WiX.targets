@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- 
+    IMPORTANT - you must import these targets for the build scripts to function.
+  -->
+  <Import Project="$(MSBuildExtensionsPath)\StealFocus\Kata\v1.2\StealFocus.Kata.Project.WiX.targets" />
+  <Import Project="StealFocus.Core.Project.targets" />
+
+  <PropertyGroup>
+    <!-- 
+      Update this number accordingly as you make releases.
+    -->
+    <UpgradeFromVersion>0.0.0.1</UpgradeFromVersion>
+    <!-- 
+      For Desktop Builds the $(VersionNumber) variable defaults to 0.0.0.0 but this won't work in WiX as the number is 
+      less than the $(UpgradeFromVersion) value, so we use a temporary number here that must be greater that the 
+      $(UpgradeFromVersion) value.
+    -->
+    <DummyVersionNumberForDesktopBuild>1.0.0.0</DummyVersionNumberForDesktopBuild>
+  </PropertyGroup>
+
+  <Target Name="BeforeBuildCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterBuildCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeRebuildCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterRebuildCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeResolveReferencesCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterResolveReferencesCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeCompileAndLinkCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterCompileAndLinkCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeCleanCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterCleanCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+</Project>

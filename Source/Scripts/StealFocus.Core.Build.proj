@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- 
+    IMPORTANT - you must import these targets for the build scripts to function.
+  -->
+  <Import Project="$(MSBuildExtensionsPath)\StealFocus\Kata\v1.2\StealFocus.Kata.Build.targets" />
+  <Import Project="StealFocus.Core.targets" />
+
+  <PropertyGroup>
+    <EventLogName>StealFocus</EventLogName>
+    <DocumentationProjectFile>StealFocus.Core.shfbproj</DocumentationProjectFile>
+    <!-- Use "CustomPropertiesForBuild" to pass properties to the Solution build - example passing multiple parameters. -->
+    <!--<CustomPropertiesForBuild>$(CustomPropertiesForBuild);MyProperty1=MyValue1;MyProperty2=MyValue2</CustomPropertiesForBuild>-->
+    <MSTestTestContainerSearchFilters>StealFocus.Core*.Tests.dll;*.webtest;*.loadtest;</MSTestTestContainerSearchFilters>
+    <MSTestTestRunConfigFilePath>Local.testsettings</MSTestTestRunConfigFilePath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(StrongNameKeyPairPath)'=='' ">
+    <StrongNameKeyPairPath>..\StealFocus.Core.StrongNameKeyPair.snk</StrongNameKeyPairPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 
+      Add "EventLogSource" items as required. These will be created (in the Registry) by the build script.
+    -->
+    <!--<EventLogSource Include="StealFocus.Core" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <SolutionToBuild Include="..\StealFocus.Core.sln">
+      <Targets />
+      <Properties />
+      <!-- 
+      Use "Targets" to control which Targets are called e.g. you can switch from the default of "Build" to "Rebuild".
+      Use "Properties" to send additional properties to the Solution build.
+      <Targets>Rebuild</Targets>
+      <Properties>FirstHelloWorldProperty=HelloYou!;SecondHelloWorldProperty=HelloMe!</Properties>
+      -->
+    </SolutionToBuild>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ConfigurationToBuild Include="Debug|Any CPU">
+      <FlavorToBuild>Debug</FlavorToBuild>
+      <PlatformToBuild>Any CPU</PlatformToBuild>
+    </ConfigurationToBuild>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsAllConfigurationsBuild)'=='true' ">
+    <ConfigurationToBuild Include="Release|Any CPU">
+      <FlavorToBuild>Release</FlavorToBuild>
+      <PlatformToBuild>Any CPU</PlatformToBuild>
+    </ConfigurationToBuild>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--<SharePointProject Include="..\StealFocus.Core.SharePoint\StealFocus.Core.SharePoint.csproj" />-->
+  </ItemGroup>
+
+  <Target Name="BeforeInitialiseBuildCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterInitialiseBuildCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeInitialiseEnvironmentCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterInitialiseEnvironmentCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeDatabaseBuildCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterDatabaseBuildCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeSolutionCompileCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterSolutionCompileCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeRunTestsCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterRunTestsCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="BeforeBuildDocumentationCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <Target Name="AfterBuildDocumentationCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+  
+  <Target Name="BeforePackageCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+  
+  <Target Name="AfterPackageCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <!-- Only called if "IsDeploymentBuild" property is set to "true". -->
+  <Target Name="BeforeDeployCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+  <!-- Only called if "IsDeploymentBuild" property is set to "true". -->
+  <Target Name="AfterDeployCustom">
+    <!-- Enter your custom steps here. -->
+  </Target>
+
+</Project>
