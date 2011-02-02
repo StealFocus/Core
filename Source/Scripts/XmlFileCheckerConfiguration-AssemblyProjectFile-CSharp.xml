@@ -3,9 +3,18 @@
   xmlns="http://schemas.StealFocus.co.uk/MSBuild/XmlFileCheckerConfiguration/v1.0">
   <XmlNamespace id="def">http://schemas.microsoft.com/developer/msbuild/2003</XmlNamespace>
   <!-- Common -->
-  <XPathToCheck xpath="/def:Project/def:PropertyGroup[def:SignAssembly = 'true']" advice="To fix this problem, open the project Properties, select the 'Signing' tab and choose 'Sign the assembly' (you will also be prompted to choose a Strong Name Key file." />
-  <XPathToCheck xpath="/def:Project/def:PropertyGroup[def:AssemblyOriginatorKeyFile = '..\StealFocus.Core.StrongNamePublicKey.snk']" advice="To fix this problem, open the project Properties, select the 'Signing' tab and choose the relevant Strong Name Key File." />
-  <XPathToCheck xpath="/def:Project/def:PropertyGroup[def:DelaySign = 'true']" advice="To fix this problem, open the project Properties, select the 'Signing' tab and choose 'Delay sign only'." />
+  <XPathToCheck xpath="/def:Project/def:PropertyGroup[def:SignAssembly = 'true']" advice="To fix this problem, open the project Properties, select the 'Signing' tab and choose 'Sign the assembly' (you will also be prompted to choose a Strong Name Key file.">
+    <FileExclusion>..\StealFocus.Core.CCNet\StealFocus.Core.CCNet.csproj</FileExclusion>
+    <FileExclusion>..\StealFocus.Core.CCNet.Tests\StealFocus.Core.CCNet.Tests.csproj</FileExclusion>
+  </XPathToCheck>
+  <XPathToCheck xpath="/def:Project/def:PropertyGroup[def:AssemblyOriginatorKeyFile = '..\StealFocus.Core.StrongNamePublicKey.snk']" advice="To fix this problem, open the project Properties, select the 'Signing' tab and choose the relevant Strong Name Key File.">
+    <FileExclusion>..\StealFocus.Core.CCNet\StealFocus.Core.CCNet.csproj</FileExclusion>
+    <FileExclusion>..\StealFocus.Core.CCNet.Tests\StealFocus.Core.CCNet.Tests.csproj</FileExclusion>
+  </XPathToCheck>
+  <XPathToCheck xpath="/def:Project/def:PropertyGroup[def:DelaySign = 'true']" advice="To fix this problem, open the project Properties, select the 'Signing' tab and choose 'Delay sign only'.">
+    <FileExclusion>..\StealFocus.Core.CCNet\StealFocus.Core.CCNet.csproj</FileExclusion>
+    <FileExclusion>..\StealFocus.Core.CCNet.Tests\StealFocus.Core.CCNet.Tests.csproj</FileExclusion>
+  </XPathToCheck>
   <!-- Debug -->
   <XPathToCheck xpath="/def:Project/def:PropertyGroup[2][def:DebugSymbols = 'true']" advice="To fix this problem, open the project Properties, select the 'Build' tab and select 'Define DEBUG constant'." />
   <XPathToCheck xpath="/def:Project/def:PropertyGroup[2][def:DebugType = 'full']" advice="To fix this problem, open the project Properties, select the 'Build' tab and select 'Define DEBUG constant'." />
