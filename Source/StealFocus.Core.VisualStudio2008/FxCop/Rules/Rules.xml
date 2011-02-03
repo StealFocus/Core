@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Rules FriendlyName="StealFocus.Core">
+  <Rule TypeName="UseAppropriateNamespaces" Category="StealFocus.Core" CheckId="EB0001">
+    <Name>Use appropriate Namespaces</Name>
+    <Description>Namespaces should not contain "Common", "Helper", "Utilities" or "Utils".</Description>
+    <Url></Url>
+    <Resolution Name="Utilities">Change the Namespace '{0}'. Namespaces should not contain "Utils" or "Utilities", such namespaces become buckets for miscellaneous code, place the objects into a relevant Namespace.</Resolution>
+    <Resolution Name="Helpers">Change the Namespace '{0}'. Static Helper classes should be avoided. Attach static "helper" functions to the relevant Class e.g. "User", do not create a "UserHelper". Therefore "Helpers" Namespaces are unnecessary.</Resolution>
+    <Resolution Name="Common">Change the Namespace '{0}'. Avoid "Common" Namespaces. The logical shared Namespace (or "common" Namespace) for "Acme.PetShop.Foo" and "Acme.PetShop.Bar" is "Acme.PetShop".</Resolution>
+    <MessageLevel Certainty="100">Error</MessageLevel>
+    <FixCategories>Breaking</FixCategories>
+    <Email></Email>
+    <Owner></Owner>
+  </Rule>
+  <Rule TypeName="UseAppropriateClassNames" Category="StealFocus.Core" CheckId="EB0002">
+    <Name>Use appropriate Class names</Name>
+    <Description>Class names should not be (or contain) "Utils", "Utilities" or "Helper". A Class name should relate to it's responsibility.</Description>
+    <Url></Url>
+    <Resolution Name="Utilities">Give the Class '{0}' a name relevant to its purpose. Reconsider your object model if appropriate.</Resolution>
+    <Resolution Name="Helper">Reconsider the Class named '{0}'. Attach static "helper" functions to the relevant Class e.g. "User", do not create a "UserHelper".</Resolution>
+    <MessageLevel Certainty="100">Error</MessageLevel>
+    <FixCategories>Breaking</FixCategories>
+    <Email></Email>
+    <Owner></Owner>
+  </Rule>
+  <Rule TypeName="UseAppropriateTestMethodNames" Category="StealFocus.Core" CheckId="EB0003">
+    <Name>Use appropriate Test Method names</Name>
+    <Description>Test Method names should start with either "IntegrationTest" or "UnitTest" to indicate its purpose.</Description>
+    <Url></Url>
+    <Resolution Name="All">Prefix the Test Method name with "IntegrationTest" or "UnitTest".</Resolution>
+    <MessageLevel Certainty="100">Error</MessageLevel>
+    <FixCategories>Breaking</FixCategories>
+    <Email></Email>
+    <Owner></Owner>
+  </Rule>
+</Rules>

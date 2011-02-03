@@ -1,0 +1,1 @@
+This file is an embedded resource and is used in unit tests.

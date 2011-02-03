@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema targetNamespace="http://tempuri.org/MyXsdResource.xsd"
+           xmlns="http://tempuri.org/MyXsdResource.xsd"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="MyElement" type="xs:string" />
+</xs:schema>

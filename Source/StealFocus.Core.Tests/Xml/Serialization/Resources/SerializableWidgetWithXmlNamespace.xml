@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SerializableWidget xmlns="http://www.MyCompany.com/Widgets">
+	<MyProperty>MyValue</MyProperty>
+</SerializableWidget>

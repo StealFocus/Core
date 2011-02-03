@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StealFocus.Core
+namespace StealFocus.Core.Build
 {
     using System;
     using System.Diagnostics;

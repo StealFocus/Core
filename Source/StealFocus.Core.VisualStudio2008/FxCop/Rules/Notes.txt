@@ -1,0 +1,4 @@
+﻿http://www.binarycoder.net/fxcop/html/
+http://www.thescarms.com/dotnet/FxCop1.aspx
+http://blogs.msdn.com/fxcop/archive/2006/03/11/549611.aspx
+http://blogs.msdn.com/fxcop/archive/2006/05/31/faq-can-i-create-custom-rules-that-target-both-visual-studio-and-fxcop-david-kean.aspx

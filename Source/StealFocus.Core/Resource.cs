@@ -22,7 +22,7 @@ namespace StealFocus.Core
     /// Resource Class.
     /// </summary>
     /// <remarks />
-    public static class Resource
+    public static partial class Resource
     {
         /// <summary>
         /// Gets a resource string for the <c>requester</c> matching the <c>key</c>.

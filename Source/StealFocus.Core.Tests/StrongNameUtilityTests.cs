@@ -13,6 +13,8 @@ namespace StealFocus.Core.Tests
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    using StealFocus.Core.Build;
+
     /// <summary>
     /// Contains tests for <see cref="StrongNameUtility"/>.
     /// </summary>
@@ -25,7 +27,7 @@ namespace StealFocus.Core.Tests
         [TestMethod]
         public void IntegrationTestExtractPublicKeyToken()
         {
-            string publicKeyToken = StrongNameUtility.ExtractPublicKeyToken(@"D:\Workspaces\Temp\StealFocus.Core\Trunk\Source\StealFocus.Core.StrongNameKeyPair.snk");
+            string publicKeyToken = StrongNameUtility.ExtractPublicKeyToken(@"C:\Workspaces\GitHub\StealFocus\Core\Source\StealFocus.Core.StrongNameKeyPair.snk");
             Assert.IsTrue(!string.IsNullOrEmpty(publicKeyToken));
             Console.WriteLine("Public Key Token is: " + publicKeyToken);
         }
@@ -36,7 +38,7 @@ namespace StealFocus.Core.Tests
         [TestMethod]
         public void IntegrationTestExtractPublicKey()
         {
-            string publicKey = StrongNameUtility.ExtractPublicKey(@"D:\Workspaces\Temp\StealFocus.Core\Trunk\Source\StealFocus.Core.StrongNameKeyPair.snk");
+            string publicKey = StrongNameUtility.ExtractPublicKey(@"C:\Workspaces\GitHub\StealFocus\Core\Source\StealFocus.Core.StrongNameKeyPair.snk");
             Assert.IsTrue(!string.IsNullOrEmpty(publicKey));
             Console.WriteLine("Public Key is: " + publicKey);
         }

@@ -90,8 +90,8 @@ namespace StealFocus.Core.IO
             }
             catch (BadImageFormatException e)
             {
-                int result = Marshal.GetHRForException(e);
-                return result != AssemblyExpected;
+               int result = Marshal.GetHRForException(e);
+               return result != AssemblyExpected;
             }
         }
 

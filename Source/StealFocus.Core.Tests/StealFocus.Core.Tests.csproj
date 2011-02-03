@@ -53,6 +53,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -64,10 +65,26 @@
     <Compile Include="..\AssemblyInfoCommon.cs">
       <Link>Properties\AssemblyInfoCommon.cs</Link>
     </Compile>
+    <Compile Include="Collections\Generic\SerializableDictionaryTests.cs" />
+    <Compile Include="CommandLineToolTests.cs" />
+    <Compile Include="GlobalAssemblyCacheTests.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Iis\MetabaseTests.cs" />
+    <Compile Include="Iis\WebServerTests.cs" />
+    <Compile Include="IO\FileSystemTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceTests.cs" />
+    <Compile Include="ResourceTests.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ResourceTests.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\ImpersonationTests.cs" />
     <Compile Include="StrongNameUtilityTests.cs" />
+    <Compile Include="Xml\Serialization\SerializableWidget.cs" />
+    <Compile Include="Xml\Serialization\SimpleXmlSerializerTest.cs" />
     <Compile Include="Xml\XmlDocumentExtensionsTests.cs" />
+    <Compile Include="Xml\XmlValidatorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\FxCopCustomDictionary.xml">
@@ -78,12 +95,53 @@
     <None Include="..\StealFocus.Core.StrongNamePublicKey.snk">
       <Link>StealFocus.Core.StrongNamePublicKey.snk</Link>
     </None>
+    <EmbeddedResource Include="ResourceTests.resx">
+      <DependentUpon>ResourceTests.cs</DependentUpon>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ResourceTests.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Xml\Resources\Schema.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MyBadlyFormedXsdResource.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MyInvalidXsdResource.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MyXsdResource.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\StealFocus.Core.Build\StealFocus.Core.Build.csproj">
+      <Project>{EEE4B72C-0907-4673-B6D8-4F6A00318DAD}</Project>
+      <Name>StealFocus.Core.Build</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StealFocus.Core.VisualStudio2008\StealFocus.Core.VisualStudio2008.csproj">
+      <Project>{48F48D3A-4548-4CB6-B19C-154347735A8A}</Project>
+      <Name>StealFocus.Core.VisualStudio2008</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StealFocus.Core\StealFocus.Core.csproj">
       <Project>{B471E39A-DC15-40B2-8C8A-2DC42C2117F0}</Project>
       <Name>StealFocus.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Xml\Resources\Document.xml" />
+    <EmbeddedResource Include="Xml\Serialization\Resources\SerializableWidget.xml" />
+    <EmbeddedResource Include="Xml\Serialization\Resources\SerializableWidgetWithXmlNamespace.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MyXmlDocumentResource.xml" />
+    <EmbeddedResource Include="Resources\SomeFile.txt" />
+    <EmbeddedResource Include="Resources\TestImage.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="IO\Resources\FileDifferentToSomeFile.txt" />
+    <EmbeddedResource Include="IO\Resources\FileTheSameAsSomeFile.txt" />
+    <EmbeddedResource Include="IO\Resources\SomeFile.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition=" '$(SolutionDir)'=='*Undefined*' ">
