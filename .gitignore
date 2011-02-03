@@ -31,3 +31,4 @@ Thumbs.db
 /Build/
 /Source/AssemblyInfoCommon.cs
 !/Library/*.pdb
+!/Source/StealFocus.Core.VisualStudio2008/TestResult.cs
