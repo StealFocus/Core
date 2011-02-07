@@ -1,50 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Default">
 
-  <Import Project="$(MSBuildExtensionsPath)\StealFocus\MSBuild\v1.0\StealFocus.MSBuild.Targets" />
-
   <Target Name="Default">
-    <!-- Much of the logic here is temporary until the custom CCNET labeller is working. -->
     <Error
       Condition=" '$(BranchName)'=='' "
-      Text="Please provide a 'BranchName' MSBuild variable e.g. 'Trunk' or 'Branch.Release'." />
+      Text="Please provide a 'BranchName' MSBuild variable e.g. 'Trunk'." />
+    <Error
+      Condition=" '$(CCNetLabel)'=='' "
+      Text="Please provide a 'CCNetLabel' MSBuild variable e.g. 'CCNetLabel'." />
     <Error
       Condition=" '$(DropLocation)'=='' "
-      Text="Please provide a 'DropLocation' MSBuild variable e.g. '\\share\Project'." />
+      Text="Please provide a 'DropLocation' MSBuild variable e.g. '\\Share\Project'." />
     <Error
       Condition=" '$(MajorVersionNumber)'=='' "
       Text="Please provide a 'MajorVersionNumber' MSBuild variable e.g. '1' (the 1 in 1.0.0.0)." />
     <Error
       Condition=" '$(MinorVersionNumber)'=='' "
       Text="Please provide a 'MinorVersionNumber' MSBuild variable e.g. '2' (the 2 in 1.2.0.0)." />
-    <DateStringParser
-      InputDateTimeFormatString="yyyy-MM-dd"
-      InputDateTimeString="$(CCNetBuildDate)">
-      <Output
-        PropertyName="BuildDateTimeUtcString"
-        TaskParameter="DateTimeUtcString" />
-    </DateStringParser>
-    <!-- BuildDateTimeUtcString = "2010-02-09 00:00:00Z" -->
-    <DateFormatter
-      DateTimeUtcString="$(BuildDateTimeUtcString)"
-      OutputDateTimeFormatString="0MMdd">
-      <!-- "0MMdd" is a temporary fix. -->
-      <Output
-        PropertyName="BuildLabelNumberRevisionNumber"
-        TaskParameter="DateTimeString" />
-    </DateFormatter>
-    <!-- BuildLabelNumberRevisionNumber = '90131' (for 31st Jan 2009) -->
-    <DateTime
-      DateTimeUtcString="$(BuildDateTimeUtcString)">
-      <Output
-        PropertyName="DayOfYearThreeDigits"
-        TaskParameter="DayOfYearThreeDigits" />
-    </DateTime>
-    <!-- DayOfYearThreeDigits = '032' (for 1st Feb 2009 as this is the 32nd day of the year) -->
     <PropertyGroup>
-      <BuildLabelNumber>$(MajorVersionNumber).$(MinorVersionNumber).$(BuildLabelNumberRevisionNumber).$(CCNetLabel)</BuildLabelNumber>
-      <BuildLabel>$(BranchName).$(BuildLabelNumber)</BuildLabel>
-      <VersionNumber>$(MajorVersionNumber).$(MinorVersionNumber).0$(DayOfYearThreeDigits).$(CCNetLabel)</VersionNumber>
+      <BuildLabelNumber>$(MajorVersionNumber).$(MinorVersionNumber).$(CCNetLabel).0</BuildLabelNumber>
+      <BuildLabel>$(BranchName)-$(BuildLabelNumber)</BuildLabel>
+      <DropLocationForBuild>$(DropLocation)\$(BranchName)\$(BuildLabelNumber)</DropLocationForBuild>
+      <IsAllConfigurationsBuild>true</IsAllConfigurationsBuild>
+      <IsCommandLineBuild>true</IsCommandLineBuild>
+      <IsDesktopBuild>false</IsDesktopBuild>
     </PropertyGroup>
     <!-- Determine whether to build the documentation. -->
     <PropertyGroup Condition=" '$(CCNetRequestSource)'=='IntervalTrigger' ">
@@ -54,39 +33,63 @@
       <IsDocumentationBuild>false</IsDocumentationBuild>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(CCNetRequestSource)'=='Scheduled' And '$(CCNetBuildCondition)'=='ForceBuild' ">
-      <!--<IsDocumentationBuild>true</IsDocumentationBuild>-->
-      <IsDocumentationBuild>fakse</IsDocumentationBuild>
+      <IsDocumentationBuild>true</IsDocumentationBuild>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(IsDocumentationBuild)'=='' ">
       <IsDocumentationBuild>false</IsDocumentationBuild>
     </PropertyGroup>
     <!-- Determine other properties. -->
     <PropertyGroup>
-      <DropLocationForBuild>$(DropLocation)\$(BranchName)\$(BuildLabelNumber)</DropLocationForBuild>
-      <!-- IsAllConfigurationsBuild=false means Debug build only, necessary due to glitch on the build server. -->
-      <IsAllConfigurationsBuild>false</IsAllConfigurationsBuild>
-      <IsCommandLineBuild>true</IsCommandLineBuild>
-      <IsDesktopBuild>false</IsDesktopBuild>
       <IsInitialiseEnvironmentBuild>true</IsInitialiseEnvironmentBuild>
       <IsPackagedBuild>true</IsPackagedBuild>
+      <VersionNumber>$(MajorVersionNumber).$(MinorVersionNumber).$(CCNetLabel).0</VersionNumber>
     </PropertyGroup>
     <!-- Log the properties we are using. -->
-    <Message Importance="high" Text="Versioning properties provided by CCNET." />
-    <Message Importance="high" Text="CCNET using 'BuildLabel' = '$(BuildLabel)'." />
-    <Message Importance="high" Text="CCNET using 'BuildLabelNumber' = '$(BuildLabelNumber)'." />
-    <Message Importance="high" Text="CCNET using 'VersionNumber' = '$(VersionNumber)'." />
-    <Message Importance="high" Text="Miscellaneous properties provided by CCNET." />
-    <Message Importance="high" Text="CCNET using 'BranchName' = '$(BranchName)'." />
-    <Message Importance="high" Text="CCNET using 'DropLocation' = '$(DropLocation)'." />
-    <Message Importance="high" Text="CCNET using 'DropLocationForBuild' = '$(DropLocationForBuild)'." />
-    <Message Importance="high" Text="CCNET using 'IsAllConfigurationsBuild' = '$(IsAllConfigurationsBuild)'." />
-    <Message Importance="high" Text="CCNET using 'IsCommandLineBuild' = '$(IsCommandLineBuild)'." />
-    <Message Importance="high" Text="CCNET using 'IsDesktopBuild' = '$(IsDesktopBuild)'." />
-    <Message Importance="high" Text="CCNET using 'IsDocumentationBuild' = '$(IsDocumentationBuild)'." />
-    <Message Importance="high" Text="CCNET using 'IsInitialiseEnvironmentBuild' = '$(IsInitialiseEnvironmentBuild)'." />
-    <Message Importance="high" Text="CCNET using 'IsPackagedBuild' = '$(IsPackagedBuild)'." />
-    <Message Importance="high" Text="CCNET using 'MajorVersionNumber' = '$(MajorVersionNumber)'." />
-    <Message Importance="high" Text="CCNET using 'MinorVersionNumber' = '$(MinorVersionNumber)'." />
+    <Message
+      Importance="high"
+      Text="Build information:" />
+    <Message 
+      Importance="high" 
+      Text="Using 'BranchName' = '$(BranchName)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'BuildLabel' = '$(BuildLabel)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'BuildLabelNumber' = '$(BuildLabelNumber)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'DropLocation' = '$(DropLocation)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'DropLocationForBuild' = '$(DropLocationForBuild)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'IsAllConfigurationsBuild' = '$(IsAllConfigurationsBuild)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'IsCommandLineBuild' = '$(IsCommandLineBuild)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'IsDesktopBuild' = '$(IsDesktopBuild)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'IsDocumentationBuild' = '$(IsDocumentationBuild)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'IsInitialiseEnvironmentBuild' = '$(IsInitialiseEnvironmentBuild)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'IsPackagedBuild' = '$(IsPackagedBuild)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'MajorVersionNumber' = '$(MajorVersionNumber)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'MinorVersionNumber' = '$(MinorVersionNumber)'." />
+    <Message 
+      Importance="high" 
+      Text="Using 'VersionNumber' = '$(VersionNumber)'." />
     <MSBuild
       Projects="StealFocus.Core.Build.proj"
       Properties="BranchName=$(BranchName);BuildLabel=$(BuildLabel);BuildLabelNumber=$(BuildLabelNumber);DropLocationForBuild=$(DropLocationForBuild);IsAllConfigurationsBuild=$(IsAllConfigurationsBuild);IsCommandLineBuild=$(IsCommandLineBuild);IsDesktopBuild=$(IsDesktopBuild);IsDocumentationBuild=$(IsDocumentationBuild);IsInitialiseEnvironmentBuild=$(IsInitialiseEnvironmentBuild);IsPackagedBuild=$(IsPackagedBuild);VersionNumber=$(VersionNumber)" />

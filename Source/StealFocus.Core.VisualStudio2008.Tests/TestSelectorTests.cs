@@ -25,6 +25,7 @@ namespace StealFocus.Core.VisualStudio2008.Tests
         /// Tests <see cref="TestSelector.GetAllTestNames(string, string)"/>.
         /// </summary>
         [TestMethod]
+        [Ignore]
         public void IntegrationTestGetAllTestNames()
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(".");
