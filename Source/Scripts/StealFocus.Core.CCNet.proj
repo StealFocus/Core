@@ -18,7 +18,7 @@
       Condition=" '$(MinorVersionNumber)'=='' "
       Text="Please provide a 'MinorVersionNumber' MSBuild variable e.g. '2' (the 2 in 1.2.0.0)." />
     <PropertyGroup>
-      <BuildLabelNumber>$(MajorVersionNumber).$(MinorVersionNumber).$(CCNetLabel).0</BuildLabelNumber>
+      <BuildLabelNumber>$(CCNetLabel)</BuildLabelNumber>
       <BuildLabel>$(BranchName)-$(BuildLabelNumber)</BuildLabel>
       <DropLocationForBuild>$(DropLocation)\$(BranchName)\$(BuildLabelNumber)</DropLocationForBuild>
       <IsAllConfigurationsBuild>true</IsAllConfigurationsBuild>
@@ -42,7 +42,7 @@
     <PropertyGroup>
       <IsInitialiseEnvironmentBuild>true</IsInitialiseEnvironmentBuild>
       <IsPackagedBuild>true</IsPackagedBuild>
-      <VersionNumber>$(MajorVersionNumber).$(MinorVersionNumber).$(CCNetLabel).0</VersionNumber>
+      <VersionNumber>$(CCNetLabel)</VersionNumber>
     </PropertyGroup>
     <!-- Log the properties we are using. -->
     <Message
