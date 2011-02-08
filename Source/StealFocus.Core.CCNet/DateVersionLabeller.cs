@@ -113,7 +113,13 @@ namespace StealFocus.Core.CCNet
                 throw new ArgumentNullException("integrationResult");
             }
 
-            int todayDateNumber = int.Parse(DateTime.Now.ToString(TodayDateNumberFormat, CultureInfo.CurrentCulture), CultureInfo.CurrentCulture);
+            string todayDateNumberAsAString = DateTime.Now.ToString(TodayDateNumberFormat, CultureInfo.CurrentCulture);
+            if (todayDateNumberAsAString.Length > 5)
+            {
+                todayDateNumberAsAString = todayDateNumberAsAString.Substring(1);
+            }
+
+            int todayDateNumber = int.Parse(todayDateNumberAsAString, CultureInfo.CurrentCulture);
             if (integrationResult.Label == null)
             {
                 this.MajorVersionNumber = 1;

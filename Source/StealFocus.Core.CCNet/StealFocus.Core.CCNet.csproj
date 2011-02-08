@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>StealFocus.Core.CCNet</RootNamespace>
-    <AssemblyName>StealFocus.Core.CCNet</AssemblyName>
+    <AssemblyName>ccnet.StealFocus.Core.CCNet.plugin</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -26,7 +26,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\StealFocus.Core.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\StealFocus.Core.CCNet.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\ccnet.StealFocus.Core.CCNet.plugin.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,7 +37,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>1607</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Release\StealFocus.Core.CCNet.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\ccnet.StealFocus.Core.CCNet.plugin.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>

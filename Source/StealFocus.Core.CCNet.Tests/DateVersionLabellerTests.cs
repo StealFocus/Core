@@ -260,7 +260,13 @@ namespace StealFocus.Core.CCNet.Tests
         /// <returns>A build label.</returns>
         private static string GetLabelForToday(int major, int minor, int build)
         {
-            int todayDateNumber = int.Parse(DateTime.Now.ToString(TodayDateNumberFormat, CultureInfo.CurrentCulture), CultureInfo.CurrentCulture);
+            string todayDateNumberAsAString = DateTime.Now.ToString(TodayDateNumberFormat, CultureInfo.CurrentCulture);
+            if (todayDateNumberAsAString.Length > 5)
+            {
+                todayDateNumberAsAString = todayDateNumberAsAString.Substring(1);
+            }
+
+            int todayDateNumber = int.Parse(todayDateNumberAsAString, CultureInfo.CurrentCulture);
             Version version = new Version(major, minor, todayDateNumber, build);
             return version.ToString();
         }
