@@ -8,6 +8,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 namespace StealFocus.Core.BizTalk2009
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Globalization;
@@ -57,6 +58,11 @@ namespace StealFocus.Core.BizTalk2009
         /// <param name="password">The password.</param>
         public static void CreateInstance(string serverName, string hostName, string userName, string password)
         {
+            if (hostName == ".")
+            {
+                throw new ArgumentException("The 'hostName' may not be a period ('.'), use the actual host name.", "hostName");
+            }
+
             PutOptions options = new PutOptions();
             options.Type = PutType.CreateOnly;
             ObjectGetOptions bts_objOptions = new ObjectGetOptions();
