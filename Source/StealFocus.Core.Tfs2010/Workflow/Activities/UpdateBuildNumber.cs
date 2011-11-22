@@ -11,6 +11,7 @@ namespace StealFocus.Core.Tfs2010.Workflow.Activities
 {
     using System;
     using System.Activities;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Text.RegularExpressions;
 
@@ -45,6 +46,12 @@ namespace StealFocus.Core.Tfs2010.Workflow.Activities
         /// </remarks>
         public OutArgument<string> VersionNumber { get; set; }
 
+        public static Version GetVersionNumber(int major, int minor, DateTime dateOfBuild, int revision)
+        {
+            int buildComponent = GetBuildComponentOfVersionNumberForDate(dateOfBuild);
+            return new Version(major, minor, buildComponent, revision);
+        }
+
         protected override void CacheMetadata(CodeActivityMetadata metadata)
         {
             base.CacheMetadata(metadata);
@@ -69,16 +76,16 @@ namespace StealFocus.Core.Tfs2010.Workflow.Activities
             DateTime dateOfBuild = DateTime.Now;
 
             // e.g. latestBuildNumberFromAllBuildDefinitions = "Acme.PetShop-Trunk-Full-0.0.11114.3"
-            string latestBuildNumberFromAllBuildDefinitions = buildServerFacade.GetLatestBuildNumberFromAllBuildDefinitions(buildDetail.TeamProject);
+            string[] latestBuildNumbersFromAllBuildDefinitions = buildServerFacade.GetLatestBuildNumbersFromAllBuildDefinitions(buildDetail.TeamProject, 10);
             Version nextVersionNumber;
-            if (latestBuildNumberFromAllBuildDefinitions == null)
+            if (latestBuildNumbersFromAllBuildDefinitions.Length < 1)
             {
                 // No previous builds at all so just create a new version from scratch.
                 nextVersionNumber = GetFreshVersionNumber(this.MajorVersion.Get(context), this.MinorVersion.Get(context), dateOfBuild);
             }
             else
             {
-                Version latestVersionNumber = GetVersionNumberFromBuildNumber(latestBuildNumberFromAllBuildDefinitions);
+                Version latestVersionNumber = GetLatestVersionNumberFromPreviousBuildNumbers(latestBuildNumbersFromAllBuildDefinitions);
                 if (latestVersionNumber == null)
                 {
                     // The previous build number was not found to have a version number contained in it.
@@ -98,17 +105,20 @@ namespace StealFocus.Core.Tfs2010.Workflow.Activities
             buildDetail.Save();
         }
 
-        private static Version GetVersionNumberFromBuildNumber(string buildNumber)
+        private static Version GetLatestVersionNumberFromPreviousBuildNumbers(IEnumerable<string> previousBuildNumbers)
         {
-            Match match = Regex.Match(buildNumber, @"\d+.\d+.\d+.\d+");
-            if (match.Success)
+            foreach (string buildNumber in previousBuildNumbers)
             {
-                string[] strings = match.Value.Split('.');
-                int major = int.Parse(strings[0], CultureInfo.CurrentCulture);
-                int minor = int.Parse(strings[1], CultureInfo.CurrentCulture);
-                int build = int.Parse(strings[2], CultureInfo.CurrentCulture);
-                int revision = int.Parse(strings[3], CultureInfo.CurrentCulture);
-                return new Version(major, minor, build, revision);
+                Match match = Regex.Match(buildNumber, @"\d+.\d+.\d+.\d+");
+                if (match.Success)
+                {
+                    string[] strings = match.Value.Split('.');
+                    int major = int.Parse(strings[0], CultureInfo.CurrentCulture);
+                    int minor = int.Parse(strings[1], CultureInfo.CurrentCulture);
+                    int build = int.Parse(strings[2], CultureInfo.CurrentCulture);
+                    int revision = int.Parse(strings[3], CultureInfo.CurrentCulture);
+                    return new Version(major, minor, build, revision);
+                }
             }
 
             return null;
@@ -116,8 +126,7 @@ namespace StealFocus.Core.Tfs2010.Workflow.Activities
 
         private static Version GetFreshVersionNumber(int majorVersion, int minorVersion, DateTime dateOfBuild)
         {
-            int buildComponent = GetBuildComponentOfVersionNumberForDate(dateOfBuild);
-            return new Version(majorVersion, minorVersion, buildComponent, 0);
+            return GetVersionNumber(majorVersion, minorVersion, dateOfBuild, 0);
         }
 
         private static Version GetNextVersionNumber(Version existingVersion, int configuredMajorVersion, int configuredMinorVersion, DateTime dateOfBuild)
@@ -129,7 +138,7 @@ namespace StealFocus.Core.Tfs2010.Workflow.Activities
                 revision = existingVersion.Revision + 1;
             }
 
-            return new Version(configuredMajorVersion, configuredMinorVersion, buildComponent, revision);
+            return GetVersionNumber(configuredMajorVersion, configuredMinorVersion, dateOfBuild, revision);
         }
 
         private static int GetBuildComponentOfVersionNumberForDate(DateTime dateOfBuild)

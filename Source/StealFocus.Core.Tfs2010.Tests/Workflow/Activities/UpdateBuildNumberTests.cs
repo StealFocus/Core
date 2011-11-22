@@ -14,6 +14,7 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
     using System.Activities.Statements;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Threading;
 
     using Microsoft.TeamFoundation.Build.Client;
@@ -58,13 +59,15 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowInvokerWithNoPreviousBuilds()
         {
             MockRepository mockRepository = new MockRepository();
-
+            Version expectedVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 0);
+            string expectedBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", expectedVersion);
+            
             // Arrange
             IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository);
-
+            
             // Act
             mockRepository.ReplayAll();
-            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, "Acme.PetShop-Trunk-Full-2.2.11121.0", "2.2.11121.0");
+            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, expectedBuildNumber, expectedVersion.ToString());
 
             // Assert
             mockRepository.VerifyAll();
@@ -77,13 +80,15 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowInvokerWithNoPreviousBuildsMatchingTheNamingConvention()
         {
             MockRepository mockRepository = new MockRepository();
-
+            Version expectedVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 0);
+            string expectedBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", expectedVersion);
+            
             // Arrange
-            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, "Acme.PetShop-Trunk-Full");
-
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { "Acme.PetShop-Trunk-Full" });
+            
             // Act
             mockRepository.ReplayAll();
-            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, "Acme.PetShop-Trunk-Full-2.2.11121.0", "2.2.11121.0");
+            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, expectedBuildNumber, expectedVersion.ToString());
 
             // Assert
             mockRepository.VerifyAll();
@@ -96,13 +101,17 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowInvokerWithAPreviousBuildFromTheSameDay()
         {
             MockRepository mockRepository = new MockRepository();
-
+            Version previousVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 0);
+            Version expectedVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 1);
+            string previousBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", previousVersion);
+            string expectedBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", expectedVersion);
+            
             // Arrange
-            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, "Acme.PetShop-Trunk-Full-2.2.11121.0");
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { previousBuildNumber });
 
             // Act
             mockRepository.ReplayAll();
-            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, "Acme.PetShop-Trunk-Full-2.2.11121.1", "2.2.11121.1");
+            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, expectedBuildNumber, expectedVersion.ToString());
 
             // Assert
             mockRepository.VerifyAll();
@@ -115,9 +124,11 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowApplicationWithAPreviousBuildFromTheSameDay()
         {
             MockRepository mockRepository = new MockRepository();
+            Version previousVersion = UpdateBuildNumber.GetVersionNumber(0, 0, DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)), 3);
+            string previousBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", previousVersion);
 
             // Arrange
-            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, "Acme.PetShop-Trunk-Full-0.0.11114.3");
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { previousBuildNumber });
 
             // Act
             mockRepository.ReplayAll();
@@ -134,9 +145,11 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestCodeActivityUsingWorkflowApplicationWithAPreviousBuildFromTheSameDay()
         {
             MockRepository mockRepository = new MockRepository();
+            Version previousVersion = UpdateBuildNumber.GetVersionNumber(0, 0, DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)), 3);
+            string previousBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", previousVersion);
 
             // Arrange
-            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, "Acme.PetShop-Trunk-Full-0.0.11114.3");
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { previousBuildNumber });
 
             // Act
             mockRepository.ReplayAll();
@@ -150,13 +163,17 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowInvokerWithADifferentPreviousBuildLabel()
         {
             MockRepository mockRepository = new MockRepository();
+            Version previousVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 0);
+            Version expectedVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 1);
+            string previousBuildNumber = GetBuildNumberForTest("Acme.AnotherShop-Trunk-Full", previousVersion);
+            string expectedBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", expectedVersion);
 
             // Arrange
-            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, "Acme.AnotherShop-Trunk-Full-2.2.11121.0");
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { previousBuildNumber });
 
             // Act
             mockRepository.ReplayAll();
-            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, "Acme.PetShop-Trunk-Full-2.2.11121.1", "2.2.11121.1");
+            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, expectedBuildNumber, expectedVersion.ToString());
 
             // Assert
             mockRepository.VerifyAll();
@@ -166,13 +183,17 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowInvokerWithAPreviousBuildFromTheSameDayAndChangeMajorMinor()
         {
             MockRepository mockRepository = new MockRepository();
+            Version previousVersion = UpdateBuildNumber.GetVersionNumber(1, 1, DateTime.Now, 0);
+            Version expectedVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 1);
+            string previousBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", previousVersion);
+            string expectedBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", expectedVersion);
 
             // Arrange
-            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, "Acme.PetShop-Trunk-Full-1.1.11121.0");
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { previousBuildNumber });
 
             // Act
             mockRepository.ReplayAll();
-            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, "Acme.PetShop-Trunk-Full-2.2.11121.1", "2.2.11121.1");
+            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, expectedBuildNumber, expectedVersion.ToString());
 
             // Assert
             mockRepository.VerifyAll();
@@ -185,13 +206,17 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowInvokerWithAPreviousBuildFromTheDayBefore()
         {
             MockRepository mockRepository = new MockRepository();
+            Version previousVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)), 9);
+            Version expectedVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 0);
+            string previousBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", previousVersion);
+            string expectedBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", expectedVersion);
 
             // Arrange
-            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, "Acme.PetShop-Trunk-Full-2.2.11120.9");
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { previousBuildNumber });
 
             // Act
             mockRepository.ReplayAll();
-            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, "Acme.PetShop-Trunk-Full-2.2.11121.0", "2.2.11121.0");
+            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, expectedBuildNumber, expectedVersion.ToString());
 
             // Assert
             mockRepository.VerifyAll();
@@ -201,27 +226,62 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
         public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowInvokerWithAPreviousBuildFromTheDayBeforeAndChangeMajorMinor()
         {
             MockRepository mockRepository = new MockRepository();
+            Version previousVersion = UpdateBuildNumber.GetVersionNumber(1, 1, DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)), 9);
+            Version expectedVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 0);
+            string previousBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", previousVersion);
+            string expectedBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", expectedVersion);
 
             // Arrange
-            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, "Acme.PetShop-Trunk-Full-1.1.11120.9");
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { previousBuildNumber });
 
             // Act
             mockRepository.ReplayAll();
-            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, "Acme.PetShop-Trunk-Full-2.2.11121.0", "2.2.11121.0");
+            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, expectedBuildNumber, expectedVersion.ToString());
 
             // Assert
             mockRepository.VerifyAll();
         }
 
-        private static IBuildDetail Arrange(MockRepository mockRepository, string existingBuildNumber)
+        [TestMethod]
+        public void UnitTestUpdateBuildNumberInTestXamlActivityUsingWorkflowInvokerWithMultiplePreviousBuilds()
+        {
+            MockRepository mockRepository = new MockRepository();
+            Version previousVersion = UpdateBuildNumber.GetVersionNumber(1, 1, DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)), 9);
+            Version expectedVersion = UpdateBuildNumber.GetVersionNumber(2, 2, DateTime.Now, 0);
+            const string PreviousBuildNumber1 = "randomString";
+            string previousBuildNumber2 = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", previousVersion);
+            string expectedBuildNumber = GetBuildNumberForTest("Acme.PetShop-Trunk-Full", expectedVersion);
+
+            // Arrange
+            IBuildDetail mockBuildDetailForCurrentBuild = Arrange(mockRepository, new[] { PreviousBuildNumber1, previousBuildNumber2 });
+
+            // Act
+            mockRepository.ReplayAll();
+            RunUpdateBuildNumberInTestXamlActivityUsingWorkflowInvoker(new UpdateBuildNumberTestActivity(), mockBuildDetailForCurrentBuild, expectedBuildNumber, expectedVersion.ToString());
+
+            // Assert
+            mockRepository.VerifyAll();
+        }
+
+        private static string GetBuildNumberForTest(string prefix, Version version)
+        {
+            return string.Format(CultureInfo.CurrentCulture, "{0}-{1}", prefix, version);
+        }
+
+        private static IBuildDetail Arrange(MockRepository mockRepository, IEnumerable<string> existingBuildNumbers)
         {
             IBuildDetail mockBuildDetailForCurrentBuild = mockRepository.DynamicMock<IBuildDetail>();
             IBuildServer mockBuildServer = mockRepository.DynamicMock<IBuildServer>();
             IBuildDetailSpec mockBuildDetailSpec = mockRepository.DynamicMock<IBuildDetailSpec>();
             IBuildQueryResult mockBuildQueryResult = mockRepository.DynamicMock<IBuildQueryResult>();
-            IBuildDetail mockBuildDetailForLastBuild = mockRepository.DynamicMock<IBuildDetail>();
             ArrayList previousBuildsList = new ArrayList();
-            previousBuildsList.Add(mockBuildDetailForLastBuild);
+            foreach (string existingBuildNumber in existingBuildNumbers)
+            {
+                IBuildDetail mockBuildDetailForPreviousBuild = mockRepository.DynamicMock<IBuildDetail>();
+                previousBuildsList.Add(mockBuildDetailForPreviousBuild);
+                Expect.Call(mockBuildDetailForPreviousBuild.BuildNumber).Return(existingBuildNumber);
+            }
+            
             IBuildDetail[] previousBuilds = (IBuildDetail[])previousBuildsList.ToArray(typeof(IBuildDetail));
             mockRepository.Record();
             Expect.Call(mockBuildDetailForCurrentBuild.BuildServer).Return(mockBuildServer);
@@ -229,7 +289,7 @@ namespace StealFocus.Core.Tfs2010.Tests.Workflow.Activities
             Expect.Call(mockBuildServer.CreateBuildDetailSpec("TeamProjectName")).Return(mockBuildDetailSpec);
             Expect.Call(mockBuildServer.QueryBuilds(mockBuildDetailSpec)).Return(mockBuildQueryResult);
             Expect.Call(mockBuildQueryResult.Builds).Return(previousBuilds);
-            Expect.Call(mockBuildDetailForLastBuild.BuildNumber).Return(existingBuildNumber);
+            
             return mockBuildDetailForCurrentBuild;
         }
 

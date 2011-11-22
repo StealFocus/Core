@@ -9,6 +9,8 @@
 
 namespace StealFocus.Core.Tfs2010.Build.Client
 {
+    using System.Collections;
+
     using Microsoft.TeamFoundation.Build.Client;
 
     public class BuildServerFacade
@@ -23,6 +25,7 @@ namespace StealFocus.Core.Tfs2010.Build.Client
         public string GetLatestBuildNumberFromAllBuildDefinitions(string teamProjectName)
         {
             IBuildDetailSpec buildDetailSpec = this.buildServer.CreateBuildDetailSpec(teamProjectName);
+            buildDetailSpec.Reason = BuildReason.All;
             buildDetailSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
             buildDetailSpec.QueryDeletedOption = QueryDeletedOption.IncludeDeleted;
             buildDetailSpec.MaxBuildsPerDefinition = 1;
@@ -33,6 +36,23 @@ namespace StealFocus.Core.Tfs2010.Build.Client
             }
 
             return buildQueryResult.Builds[0].BuildNumber;
+        }
+
+        public string[] GetLatestBuildNumbersFromAllBuildDefinitions(string teamProjectName, int numberOfBuildNumbersToRetrieve)
+        {
+            IBuildDetailSpec buildDetailSpec = this.buildServer.CreateBuildDetailSpec(teamProjectName);
+            buildDetailSpec.Reason = BuildReason.All;
+            buildDetailSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
+            buildDetailSpec.QueryDeletedOption = QueryDeletedOption.IncludeDeleted;
+            buildDetailSpec.MaxBuildsPerDefinition = numberOfBuildNumbersToRetrieve;
+            IBuildQueryResult buildQueryResult = this.buildServer.QueryBuilds(buildDetailSpec);
+            ArrayList buildNumberList = new ArrayList(numberOfBuildNumbersToRetrieve);
+            for (int i = 0; i < numberOfBuildNumbersToRetrieve && i < buildQueryResult.Builds.Length; i++)
+            {
+                buildNumberList.Add(buildQueryResult.Builds[i].BuildNumber);
+            }
+
+            return (string[])buildNumberList.ToArray(typeof(string));
         }
     }
 }
